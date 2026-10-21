@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body>
+<title>Конкурс «Разберём ваш спор»</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Golos+Text:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one long page — 3D hero, navigation tiles as the second screen, then sections; 3D podium beside the prizes. Single deep-teal look by design. */
+:root{
+  --ground:#0a2a33; --ground2:#0c333d; --deep:#0d4f55; --teal:#16a394; --mint:#7fe0c8; --paper:#f4fbf9; --ink:#0b2f3a;
+  --soft:#cfe9e3; --muted:#8fb3b0; --amber:#f2b84b; --line:rgba(127,224,200,.22);
+  --display:"Unbounded","Golos Text",Arial,sans-serif; --body:"Golos Text",-apple-system,"Segoe UI",Arial,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ground);color:var(--paper);font-family:var(--body);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+section{padding-block:72px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));scroll-margin-top:env(safe-area-inset-top,0px)}
+section:nth-of-type(even){background:var(--ground2)}
+.wrap{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--mint)}
+h1,h2,h3{font-family:var(--display);margin:0;letter-spacing:-.01em;text-wrap:balance}
+h1{font-size:clamp(34px,5.6vw,66px);line-height:1.05}
+h2{font-size:clamp(24px,3.2vw,38px);line-height:1.12}
+h3{font-size:19px;font-weight:500}
+.lead{color:var(--soft);font-size:clamp(15px,1.5vw,18px);max-width:62ch;margin:0}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+.card{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:18px;padding:22px;min-width:0}
+.card p{margin:6px 0 0;color:var(--soft)}
+.pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:20px;background:var(--mint);color:var(--ink)}
+.pill.amber{background:var(--amber)}
+.big{font-family:var(--display);font-size:clamp(34px,4.2vw,52px);font-weight:700;color:var(--mint);line-height:1;font-variant-numeric:tabular-nums}
+
+/* scroll-in motion: visible at rest, plays when a block enters view */
+.rv.in{animation:up .7s cubic-bezier(.2,.7,.2,1) both}
+.grid>.rv.in:nth-child(2){animation-delay:.1s}.grid>.rv.in:nth-child(3){animation-delay:.2s}.grid>.rv.in:nth-child(4){animation-delay:.3s}.grid>.rv.in:nth-child(5){animation-delay:.4s}.grid>.rv.in:nth-child(6){animation-delay:.5s}
+@keyframes up{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+
+/* hero */
+.hero{min-height:min(92vh,760px);display:flex;align-items:center;position:relative;overflow:hidden;padding-block:48px}
+.hero .wrap{display:grid;grid-template-columns:1.05fr 1fr;align-items:center;gap:24px;width:100%}
+.hero .hcopy{display:flex;flex-direction:column;gap:24px;position:relative;z-index:1}
+.hero .hcopy>*{animation:up .8s cubic-bezier(.2,.7,.2,1) both}
+.hero .hcopy>*:nth-child(2){animation-delay:.1s}.hero .hcopy>*:nth-child(3){animation-delay:.2s}.hero .hcopy>*:nth-child(4){animation-delay:.3s}.hero .hcopy>*:nth-child(5){animation-delay:.4s}
+.stage3d{position:relative;aspect-ratio:1/1;width:100%;max-width:100%}
+.stage3d canvas{width:100%!important;height:100%!important;display:block}
+.glow{position:absolute;inset:12%;border-radius:50%;background:radial-gradient(circle,rgba(127,224,200,.35),transparent 65%);filter:blur(10px);animation:pulse 5s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.08);opacity:.7}}
+.fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:120px;color:var(--mint)}
+.facts{display:flex;gap:26px;flex-wrap:wrap}
+.facts div{font-size:14px;color:var(--soft)}
+.facts b{display:block;font-family:var(--display);font-size:22px;color:var(--paper);font-weight:500}
+.btn{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:10px;background:var(--mint);color:var(--ink);font-weight:700;padding:13px 20px;border-radius:30px;align-self:flex-start}
+.btn:hover{background:#a6f0dc}
+.btn:focus-visible,.tile:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+
+/* navigation tiles */
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.tile{display:flex;flex-direction:column;gap:6px;padding:22px;border-radius:18px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--paper);text-decoration:none;position:relative;overflow:hidden;transition:transform .25s,border-color .25s,background .25s;min-width:0}
+.tile:hover{transform:translateY(-4px);border-color:var(--mint);background:rgba(127,224,200,.09)}
+.tile .no{font-family:var(--display);font-size:13px;color:var(--mint)}
+.tile b{font-family:var(--display);font-weight:500;font-size:19px}
+.tile span{font-size:14px;color:var(--soft)}
+.tile::after{content:"→";position:absolute;right:20px;top:18px;font-size:20px;color:var(--mint);transition:transform .25s}
+.tile:hover::after{transform:translateX(5px)}
+.tile.hot{grid-column:span 2;background:linear-gradient(150deg,#16a394,#0d4f55);border:0}
+.tile.hot span{color:#e3f7f2}
+
+/* prizes */
+.prizes{display:grid;grid-template-columns:1fr 1.3fr;gap:20px;align-items:center}
+.prize-list{display:flex;flex-direction:column;gap:12px}
+.prize{display:grid;grid-template-columns:56px 1fr;gap:14px;align-items:start}
+.prize .m{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:24px;background:var(--deep);color:var(--mint)}
+.prize.gold .m{background:var(--amber);color:var(--ink)}
+.prize ul{margin:6px 0 0;padding-left:18px;color:var(--soft);font-size:15px}
+.prize .price{font-size:13px;color:var(--muted);margin-top:6px}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.step .n{width:52px;height:52px;border-radius:50%;background:var(--mint);color:var(--ink);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:21px;margin-bottom:12px}
+.step.in .n{animation:pop .55s .25s cubic-bezier(.3,1.6,.5,1) both}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+.form{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.form div{border:1px dashed var(--line);border-radius:12px;padding:10px 12px;font-size:14px;color:var(--soft);min-width:0}
+.form b{display:block;color:var(--paper);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+
+/* timeline */
+.tl{position:relative;display:grid;grid-template-columns:repeat(6,1fr);gap:10px;padding-top:34px}
+.tl::before{content:"";position:absolute;left:0;right:0;top:12px;height:3px;background:var(--line);border-radius:2px}
+.tl .bar{position:absolute;left:0;top:12px;height:3px;background:var(--mint);border-radius:2px;width:100%}
+.tl.in .bar{animation:grow 1.6s .2s ease both}
+@keyframes grow{from{width:0}to{width:100%}}
+.ev{position:relative;min-width:0}
+.ev::before{content:"";position:absolute;top:-28px;left:0;width:14px;height:14px;border-radius:50%;background:var(--ground2);border:3px solid var(--mint)}
+.ev.star::before{background:var(--amber);border-color:var(--amber)}
+.ev .d{font-family:var(--display);font-size:18px;color:var(--mint)}
+.ev.star .d{color:var(--amber)}
+.ev p{margin:4px 0 0;font-size:14px;color:var(--soft)}
+
+/* library */
+.lib{display:grid;grid-template-columns:240px 1fr;gap:16px}
+.tabs{display:flex;flex-direction:column;gap:6px;position:sticky;top:16px;align-self:start}
+.tab{all:unset;cursor:pointer;padding:11px 14px;border-radius:12px;font-size:14px;font-weight:600;color:var(--soft)}
+.tab span{display:block;font-weight:400;font-size:12px;color:var(--muted)}
+.tab:hover{background:rgba(255,255,255,.05)}
+.tab[aria-selected="true"]{background:var(--mint);color:var(--ink)}
+.tab[aria-selected="true"] span{color:var(--deep)}
+.tab:focus-visible,.copy:focus-visible{outline:2px solid var(--amber)}
+.panel{min-width:0;display:flex;flex-direction:column;gap:12px}
+.panel.show .txt{animation:up .45s ease both}
+.panel.show .txt:nth-of-type(2){animation-delay:.08s}.panel.show .txt:nth-of-type(3){animation-delay:.16s}
+.txt{background:var(--paper);color:var(--ink);border-radius:16px;padding:18px 20px}
+.txt .h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.txt .h b{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--deep)}
+.txt pre{margin:0;white-space:pre-wrap;font-family:var(--body);font-size:14.5px;line-height:1.55}
+.copy{all:unset;cursor:pointer;font-size:12px;font-weight:700;padding:6px 12px;border-radius:20px;background:var(--deep);color:#fff;flex:none}
+.copy.ok{background:var(--teal)}
+
+.ask{background:linear-gradient(150deg,#16a394,#0d4f55);border-radius:18px;padding:24px}
+.ask ol{margin:8px 0 0;padding-left:20px;font-size:17px}
+.up{position:fixed;right:max(16px,calc(16px + env(safe-area-inset-right,0px)));bottom:calc(16px + env(safe-area-inset-bottom,0px));width:46px;height:46px;border-radius:50%;background:var(--mint);color:var(--ink);display:flex;align-items:center;justify-content:center;font-weight:700;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,.35);z-index:5}
+
+@media (max-width:820px){
+  .hero .wrap,.prizes,.g2{grid-template-columns:1fr}
+  .stage3d{max-width:380px;margin:0 auto}
+  .tiles,.g3,.g4,.steps,.form{grid-template-columns:1fr}
+  .tile.hot{grid-column:auto}
+  .tl{grid-template-columns:1fr;padding-top:0;padding-left:30px}
+  .tl::before{left:8px;right:auto;top:0;bottom:0;width:3px;height:auto}
+  .tl .bar{display:none}
+  .ev::before{top:4px;left:-29px}
+  .lib{grid-template-columns:1fr}
+  .tabs{flex-direction:row;overflow-x:auto;position:static;padding-bottom:4px}
+  .tab{white-space:nowrap}.tab span{display:none}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+</style>
+
+<!-- hero -->
+<section class="hero" id="top">
+  <div class="wrap">
+    <div class="hcopy">
+      <div class="eyebrow">ИЮР · конкурс · ноябрь 2026</div>
+      <h1>Разберём ваш спор на эфире</h1>
+      <p class="lead">Подрядчики, проектировщики и изыскатели описывают свой спор с заказчиком. Три самые показательные ситуации Эдуард и Екатерина разбирают бесплатно на вебинаре 3 декабря.</p>
+      <div class="facts">
+        <div><b>09–22.11</b>приём заявок</div>
+        <div><b>27.11</b>итоги в канале</div>
+        <div><b>03.12</b>разбор на эфире</div>
+        <div><b>160&nbsp;000&nbsp;₽</b>призы по прайсу</div>
+      </div>
+      <a class="btn" href="#nav">Что внутри ↓</a>
+    </div>
+    <div class="stage3d" id="cup" aria-label="Кубок конкурса, 3D"><div class="glow"></div></div>
+  </div>
+</section>
+
+<!-- navigation -->
+<section id="nav">
+  <div class="wrap">
+    <div class="eyebrow">Навигация</div>
+    <h2>Что внутри</h2>
+    <div class="tiles">
+      <a class="tile rv" href="#prizes"><span class="no">01</span><b>Призы</b><span>Аудит за 100&nbsp;000&nbsp;₽, две консультации по 30&nbsp;000&nbsp;₽, запись эфира всем</span></a>
+      <a class="tile rv" href="#how"><span class="no">02</span><b>Как участвовать</b><span>Три шага и форма из четырёх полей</span></a>
+      <a class="tile rv" href="#dates"><span class="no">03</span><b>Календарь</b><span>С 30.10 до разбора на эфире 03.12</span></a>
+      <a class="tile hot rv" href="#content"><span class="no">04</span><b>Готовые тексты</b><span>Посты, ролики, письма, звонок, РСЯ, правила</span></a>
+      <a class="tile rv" href="#goals"><span class="no">05</span><b>Ориентиры</b><span>Сколько заявок и подписчиков ждём</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- prizes -->
+<section id="prizes">
+  <div class="wrap">
+    <div class="eyebrow">01 · Что разыгрываем</div>
+    <h2>Призы из нашей линейки: их хочет только тот, у кого есть спор</h2>
+    <div class="prizes">
+      <div class="stage3d" id="podium" aria-label="Пьедестал, 3D"><div class="glow"></div></div>
+      <div class="prize-list">
+        <div class="card prize gold rv"><div class="m">1</div><div><h3>Аудит спора</h3><ul><li>Проверяем договор и документы</li><li>Оцениваем позицию и шансы</li><li>Даём план: претензия, переговоры или суд</li></ul><div class="price">Юридический аудит по прайсу: 100&nbsp;000&nbsp;₽</div></div></div>
+        <div class="card prize rv"><div class="m">2–3</div><div><h3>Стратегическая консультация</h3><ul><li>До 60 минут с Эдуардом или Екатериной</li><li>Подробный разбор и план действий</li></ul><div class="price">По прайсу: 30&nbsp;000&nbsp;₽ каждому</div></div></div>
+        <div class="card prize rv"><div class="m">∞</div><div><h3>Запись вебинара — всем</h3><ul><li>По теме спора, сразу после заявки</li><li>Плюс звонок Дарьи за 1–2 дня</li></ul><div class="price">Обычно 100 ₽ · для нас 0 ₽</div></div></div>
+      </div>
+    </div>
+    <p class="lead">Призовой фонд по прайсу — 160&nbsp;000&nbsp;₽. Ситуации трёх победителей разбираем на эфире 03.12. Ещё 5–8 заявок уходят в рубрику «Вопрос-ответ» с согласия участников.</p>
+  </div>
+</section>
+
+<!-- how -->
+<section id="how">
+  <div class="wrap">
+    <div class="eyebrow">02 · Как участвовать</div>
+    <h2>Три шага, три минуты</h2>
+    <div class="steps">
+      <div class="step card rv"><div class="n">1</div><h3>Подписаться</h3><p>На Telegram-канал ИЮР. Проверяем при отборе</p></div>
+      <div class="step card rv"><div class="n">2</div><h3>Описать спор</h3><p>Форма на странице конкурса, 4 поля и пример</p></div>
+      <div class="step card rv"><div class="n">3</div><h3>Получить запись</h3><p>Сразу на почту. Итоги 27.11, разбор 03.12</p></div>
+    </div>
+    <div class="form rv">
+      <div><b>Суть спора</b>«Заказчик не подписывает КС-2 с июля…»</div>
+      <div><b>С кем спор</b>Заказчик, генподрядчик, экспертиза</div>
+      <div><b>Сумма</b>Примерно, ₽</div>
+      <div><b>Стадия</b>Переговоры, претензия, суд</div>
+    </div>
+    <p class="lead" style="font-size:15px">Победителей выбирают эксперты по опубликованным критериям: типичность, документы, сумма, стадия. Участие бесплатное, поэтому это конкурс, а не лотерея.</p>
+  </div>
+</section>
+
+<!-- dates -->
+<section id="dates">
+  <div class="wrap">
+    <div class="eyebrow">03 · Календарь</div>
+    <h2>Месяц от старта до разбора на эфире</h2>
+    <div class="tl rv"><div class="bar"></div>
+      <div class="ev"><div class="d">до 30.10</div><p>Утверждаем правила и критерии</p></div>
+      <div class="ev"><div class="d">09.11</div><p>Старт: пост в закрепе, посевы, РСЯ</p></div>
+      <div class="ev"><div class="d">12 и 19.11</div><p>Анонс на эфирах, ролик «Осталось 3 дня»</p></div>
+      <div class="ev"><div class="d">22.11</div><p>Приём заявок закрыт</p></div>
+      <div class="ev"><div class="d">27.11</div><p>Итоги в канале, зовём на эфир</p></div>
+      <div class="ev star"><div class="d">03.12</div><p>Эдуард разбирает 3 ситуации на эфире</p></div>
+    </div>
+    <div class="grid g4">
+      <div class="card rv"><span class="pill">Telegram</span><p>3 поста и сторис-таймер каждый день</p></div>
+      <div class="card rv"><span class="pill">Reels и Shorts</span><p>2 ролика: 10.11 и 19.11</p></div>
+      <div class="card rv"><span class="pill">Посевы и партнёр</span><p>2 волны репостом, «Тамплиер» к эфиру 19.11</p></div>
+      <div class="card rv"><span class="pill">Email и РСЯ</span><p>2 письма по базе, креатив на страницу</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- content -->
+<section id="content">
+  <div class="wrap">
+    <div class="eyebrow">04 · Готовые тексты</div>
+    <h2>Тексты для каждого: нажмите роль и скопируйте</h2>
+<div class="lib">
+      <div class="tabs" role="tablist" aria-label="Роли">
+        <button class="tab" role="tab" id="t-inna" aria-controls="p-inna" aria-selected="true">Инна · Telegram<span>3 поста и сторис</span></button>
+        <button class="tab" role="tab" id="t-reels" aria-controls="p-reels" aria-selected="false">Инна и Саша · ролики<span>2 сценария Reels и Shorts</span></button>
+        <button class="tab" role="tab" id="t-seed" aria-controls="p-seed" aria-selected="false">Посевщик и партнёр<span>текст для каналов</span></button>
+        <button class="tab" role="tab" id="t-mail" aria-controls="p-mail" aria-selected="false">Email<span>2 письма по базе</span></button>
+        <button class="tab" role="tab" id="t-ed" aria-controls="p-ed" aria-selected="false">Эдуард · эфиры<span>что сказать в конце</span></button>
+        <button class="tab" role="tab" id="t-dar" aria-controls="p-dar" aria-selected="false">Дарья · звонок<span>скрипт за 2 минуты</span></button>
+        <button class="tab" role="tab" id="t-mih" aria-controls="p-mih" aria-selected="false">Михаил · РСЯ<span>2 креатива</span></button>
+        <button class="tab" role="tab" id="t-rules" aria-controls="p-rules" aria-selected="false">Правила<span>для страницы конкурса</span></button>
+      </div>
+
+      <div class="panel show" role="tabpanel" id="p-inna" aria-labelledby="t-inna">
+        <div class="txt"><div class="h"><b>Пн 09.11 · пост-анонс, в закреп</b><button class="copy">Скопировать</button></div><pre>⚖️ Разберём ваш спор бесплатно — на эфире 3 декабря
+
+Заказчик не подписывает акты, не платит за допработы или требует переделать проект бесплатно? Опишите свою ситуацию. Три самые показательные Эдуард и Екатерина разберут на вебинаре 3 декабря.
+
+🏆 1 место — юридический аудит спора: проверим договор и документы, оценим позицию, дадим план действий
+🥈 2 и 3 место — стратегическая консультация на час с Эдуардом или Екатериной
+🎁 Всем участникам — запись вебинара по теме вашего спора
+
+Призовой фонд по прайсу — 160 000 ₽.
+
+Как участвовать:
+1. Подпишитесь на канал
+2. Опишите спор в форме — 4 поля, 3 минуты: [ссылка на форму]
+
+Заявки до 22 ноября. Названия компаний и объектов не публикуем.</pre></div>
+        <div class="txt"><div class="h"><b>Пн 16.11 · какие споры уже прислали</b><button class="copy">Скопировать</button></div><pre>📬 За неделю пришло [N] заявок на конкурс. Чаще всего пишут о трёх ситуациях:
+
+— заказчик несколько месяцев не подписывает КС-2;
+— экспертиза требует доп. изыскания, а заказчик не хочет за них платить;
+— генподрядчик удерживает гарантийные после сдачи объекта.
+
+Узнали свою? До 22 ноября ещё можно описать спор: [ссылка на форму]
+Три лучшие ситуации разберём на эфире 3 декабря.
+
+[Инна: заменить три пункта на реальные из заявок]</pre></div>
+        <div class="txt"><div class="h"><b>Пт 27.11 · итоги + сторис каждый день</b><button class="copy">Скопировать</button></div><pre>🏆 Итоги конкурса «Разберём ваш спор»
+
+Пришло [N] заявок. Эдуард и Екатерина выбрали три ситуации:
+1. [суть без названий] — аудит спора
+2. [суть без названий] — консультация
+3. [суть без названий] — консультация
+
+Все три разберём 3 декабря в 17:00 на эфире «Заказчик начислил миллионы неустойки». Регистрация: [ссылка]
+
+Спасибо всем участникам: запись эфира уже у вас на почте, Дарья свяжется с каждым.
+
+—
+Сторис 09–22.11: «До конца приёма заявок [N] дней» + стикер-ссылка «Описать спор»</pre></div>
+      </div>
+
+      <div class="panel" role="tabpanel" id="p-reels" aria-labelledby="t-reels" hidden>
+        <div class="txt"><div class="h"><b>Вт 10.11 · ролик-анонс, 30 с</b><button class="copy">Скопировать</button></div><pre>0–3 с  Текст в кадре: «Акты не подписаны 4 месяца. Что делать?»
+3–15 с Анимация: листается календарь, сумма «12 млн ₽» загорается красным, заказчик молчит в чате
+15–25 с Голос или текст: «Опишите свою ситуацию. Три самые показательные Эдуард разберёт бесплатно на эфире 3 декабря»
+25–30 с «Ссылка в шапке профиля. Заявки до 22 ноября»
+
+Подпись: А у вас сколько висят неподписанные акты? Пишите в комментариях 👇
+Метка возраста: «Для всех». Дубль в YouTube Shorts и VK в тот же день, ссылка в описании с UTM.</pre></div>
+        <div class="txt"><div class="h"><b>Чт 19.11 · «Осталось 3 дня», 25 с</b><button class="copy">Скопировать</button></div><pre>0–3 с  Текст: «Нам прислали [N] споров. Вот три самых частых»
+3–18 с Три карточки по очереди: акты не подписаны · допизыскания бесплатно · удержали гарантийные
+18–25 с «Ваш спор — четвёртый? Осталось 3 дня. Ссылка в шапке»
+
+Подпись: Узнали свою ситуацию? До 22 ноября ещё можно участвовать</pre></div>
+      </div>
+
+      <div class="panel" role="tabpanel" id="p-seed" aria-labelledby="t-seed" hidden>
+        <div class="txt"><div class="h"><b>Посевы 09.11 и 16.11 · репост анонса + подводка</b><button class="copy">Скопировать</button></div><pre>Коллеги из ИЮР — юристы по строительным спорам — проводят конкурс для подрядчиков, проектировщиков и изыскателей.
+
+Опишите свой спор с заказчиком, и три самые показательные ситуации разберут бесплатно на эфире 3 декабря. Победитель получит аудит спора. Участие бесплатное, заявки до 22 ноября 👇
+
+[репост поста-анонса из канала ИЮР]</pre></div>
+        <div class="txt"><div class="h"><b>Партнёр эфира 19.11 · «Тамплиер»</b><button class="copy">Скопировать</button></div><pre>19 ноября проводим совместный вебинар с юристами ИЮР: «Работы есть, оборот есть — прибыли нет. Где строительная компания теряет деньги на объекте». Регистрация: [ссылка]
+
+А ещё у ИЮР до 22 ноября идёт конкурс: опишите свой спор с заказчиком, лучшие три ситуации разберут бесплатно на эфире 3 декабря: [ссылка на форму]</pre></div>
+      </div>
+
+      <div class="panel" role="tabpanel" id="p-mail" aria-labelledby="t-mail" hidden>
+        <div class="txt"><div class="h"><b>Вт 10.11 · письмо 1</b><button class="copy">Скопировать</button></div><pre>Тема: Разберём ваш спор бесплатно
+Прехедер: Три ситуации — на эфире 3 декабря
+
+Здравствуйте!
+
+Если заказчик не подписывает акты, не платит за допработы или требует переделок бесплатно, опишите свою ситуацию в короткой форме. Это 4 поля и 3 минуты.
+
+Три самые показательные ситуации Эдуард и Екатерина разберут бесплатно на вебинаре 3 декабря. Победитель получит юридический аудит спора (по прайсу 100 000 ₽), второе и третье место — стратегическую консультацию на час (30 000 ₽). Все участники сразу получат запись нашего вебинара по теме их спора.
+
+[Кнопка: Описать спор]
+
+Заявки принимаем до 22 ноября. Названия компаний и объектов не публикуем.
+
+Команда ИЮР</pre></div>
+        <div class="txt"><div class="h"><b>Чт 19.11 · письмо 2, напоминание</b><button class="copy">Скопировать</button></div><pre>Тема: Осталось 3 дня: опишите свой спор
+Прехедер: Лучшие ситуации разберём на эфире 3 декабря
+
+Здравствуйте!
+
+До 22 ноября принимаем заявки на конкурс «Разберём ваш спор». Уже пришло [N] ситуаций: чаще всего пишут про неподписанные акты и допработы без оплаты.
+
+Опишите свой спор, и, возможно, его разберут на эфире 3 декабря. Запись вебинара по вашей теме придёт сразу после заявки.
+
+[Кнопка: Описать спор]
+
+Команда ИЮР</pre></div>
+      </div>
+
+      <div class="panel" role="tabpanel" id="p-ed" aria-labelledby="t-ed" hidden>
+        <div class="txt"><div class="h"><b>Эфиры 12.11 и 19.11 · последние 30 секунд</b><button class="copy">Скопировать</button></div><pre>И последнее. До 22 ноября у нас идёт конкурс: опишите свой спор с заказчиком в короткой форме, ссылку дадим в чате.
+
+Три самые показательные ситуации мы с Екатериной разберём бесплатно на эфире 3 декабря. Первое место получит аудит спора, второе и третье — консультацию. А запись сегодняшнего эфира все участники получат сразу.
+
+Ссылка уже в чате.</pre></div>
+        <div class="txt"><div class="h"><b>Чат эфира · сообщение модератора</b><button class="copy">Скопировать</button></div><pre>Конкурс «Разберём ваш спор»: опишите ситуацию, три лучшие разберём бесплатно 3 декабря 👉 [ссылка на форму]</pre></div>
+      </div>
+
+      <div class="panel" role="tabpanel" id="p-dar" aria-labelledby="t-dar" hidden>
+        <div class="txt"><div class="h"><b>Звонок в течение 1–2 дней после заявки</b><button class="copy">Скопировать</button></div><pre>Здравствуйте, [имя]! Это Дарья из ИЮР. Вы оставили заявку на конкурс «Разберём ваш спор», спасибо.
+
+Хочу уточнить пару деталей, чтобы юристы правильно поняли ситуацию:
+— на какой стадии сейчас спор: переговоры, претензия или уже суд?
+— есть ли сроки, которые горят: ответ на претензию, заседание, срок давности?
+— какие документы есть на руках: договор, акты, переписка?
+
+Если сроки горят:
+«Итоги будут 27 ноября. Если ждать рискованно, Эдуард или Екатерина могут посмотреть ситуацию на консультации раньше. Записать вас на удобное время?»
+
+Если не горят:
+«Отлично, заявка у юристов. Итоги объявим в канале 27 ноября, а 3 декабря на эфире разберём лучшие ситуации. Пришлю ссылку на регистрацию».
+
+В Bitrix24: метка «конкурс», стадия спора, сумма, срочность.</pre></div>
+      </div>
+
+      <div class="panel" role="tabpanel" id="p-mih" aria-labelledby="t-mih" hidden>
+        <div class="txt"><div class="h"><b>Креатив 1</b><button class="copy">Скопировать</button></div><pre>Заголовок: Заказчик не платит? Разберём ваш спор бесплатно
+Текст: Опишите ситуацию — три лучшие юристы ИЮР разберут на эфире 3 декабря. Заявки до 22 ноября.</pre></div>
+        <div class="txt"><div class="h"><b>Креатив 2</b><button class="copy">Скопировать</button></div><pre>Заголовок: Акты не подписаны? Юристы разберут ваш случай
+Текст: Конкурс для подрядчиков и проектировщиков. Призы по прайсу на 160 000 ₽. Участие бесплатное.</pre></div>
+      </div>
+
+      <div class="panel" role="tabpanel" id="p-rules" aria-labelledby="t-rules" hidden>
+        <div class="txt"><div class="h"><b>Правила · для страницы конкурса</b><button class="copy">Скопировать</button></div><pre>Организатор: [юрлицо ИЮР, ИНН].
+Сроки: приём заявок с 9 по 22 ноября 2026 года включительно. Итоги — 27 ноября в Telegram-канале t.me/urfundament.
+Кто может участвовать: компании и специалисты в сфере строительства, проектирования и изысканий, подписанные на Telegram-канал ИЮР.
+Как участвовать: заполнить форму на странице конкурса. Участие бесплатное и не требует покупки.
+Призы: 1 место — юридический аудит (стоимость по прайсу 100 000 ₽); 2 и 3 место — стратегическая консультация до 60 минут с юристом ИЮР (стоимость по прайсу 30 000 ₽ каждая). Все участники получают запись вебинара ИЮР по теме спора.
+Как выбираем победителей: эксперты ИЮР оценивают заявки по критериям: типичность ситуации для отрасли, наличие документов, сумма и стадия спора.
+Публикация: ситуации победителей разбираются на вебинаре 3 декабря и в канале без названий компаний, объектов и имён — только с согласия участника.
+Персональные данные обрабатываются по согласию, данному в форме.
+
+[Перед публикацией: проверить с бухгалтером НДФЛ, если победитель — физлицо и приз дороже 4 000 ₽]</pre></div>
+      </div>
+      </div>
+</section>
+
+<!-- goals -->
+<section id="goals">
+  <div class="wrap">
+    <div class="eyebrow">05 · Как поймём, что сработало</div>
+    <h2>Ориентиры на конкурс</h2>
+    <div class="grid g4">
+      <div class="card rv"><div class="big" data-to="30" data-suf="+">30+</div><p>заявок с описанием спора</p></div>
+      <div class="card rv"><div class="big" data-to="150" data-pre="+">+150</div><p>подписчиков в Telegram за 2 недели</p></div>
+      <div class="card rv"><div class="big" data-to="10" data-suf="%">10%</div><p>заявок переходят в консультацию</p></div>
+      <div class="card rv"><div class="big" data-to="8" data-suf="+">8+</div><p>вопросов для рубрики «Вопрос-ответ»</p></div>
+    </div>
+  </div>
+</section>
+
+<a class="up" href="#nav" aria-label="К навигации">↑</a>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* scroll-in */
+  var io=('IntersectionObserver' in window)?new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');if(e.target.querySelector)count(e.target);io.unobserve(e.target);}})},{threshold:.2}):null;
+  document.querySelectorAll('.rv').forEach(function(el){if(io&&!reduce)io.observe(el)});
+  function count(root){var els=root.matches&&root.matches('[data-to]')?[root]:[].slice.call(root.querySelectorAll('[data-to]'));
+    els.forEach(function(el){var to=+el.dataset.to,pre=el.dataset.pre||'',suf=el.dataset.suf||'',t0=null;
+      function f(t){if(!t0)t0=t;var p=Math.min(1,(t-t0)/1200);el.textContent=pre+Math.round(to*(1-Math.pow(1-p,3)))+suf;if(p<1)requestAnimationFrame(f);}requestAnimationFrame(f);});}
+
+  /* tabs */
+  var tabs=[].slice.call(document.querySelectorAll('.tab'));
+  function sel(t){tabs.forEach(function(b){var on=b===t;b.setAttribute('aria-selected',on);var p=document.getElementById(b.getAttribute('aria-controls'));p.hidden=!on;p.classList.toggle('show',on);});}
+  tabs.forEach(function(t,i){t.onclick=function(){sel(t)};t.onkeydown=function(e){var d=(e.key==='ArrowDown'||e.key==='ArrowRight')?1:(e.key==='ArrowUp'||e.key==='ArrowLeft')?-1:0;if(d){e.preventDefault();var n=tabs[(i+d+tabs.length)%tabs.length];n.focus();sel(n);}}});
+
+  /* copy */
+  document.querySelectorAll('.copy').forEach(function(b){b.onclick=function(){var pre=b.closest('.txt').querySelector('pre'),txt=pre.innerText;
+    function done(){b.textContent='Скопировано';b.classList.add('ok');setTimeout(function(){b.textContent='Скопировать';b.classList.remove('ok')},1600);}
+    function fallback(){var r=document.createRange();r.selectNodeContents(pre);var s=window.getSelection();s.removeAllRanges();s.addRange(r);b.textContent='Выделено, Ctrl+C';}
+    try{navigator.clipboard.writeText(txt).then(done,fallback)}catch(e){fallback()}};});
+
+  /* 3D */
+  function fail(id,ch){var el=document.getElementById(id);if(!el.querySelector('.fallback')){var f=document.createElement('div');f.className='fallback';f.textContent=ch;el.appendChild(f);}}
+  if(!window.THREE){fail('cup','🏆');fail('podium','🥇');return;}
+  var T=THREE;
+  function scene3d(id,build,camZ,camY){
+    var host=document.getElementById(id),r;
+    try{r=new T.WebGLRenderer({antialias:true,alpha:true});}catch(e){fail(id,id==='cup'?'🏆':'🥇');return;}
+    r.setPixelRatio(Math.min(2,window.devicePixelRatio||1));host.appendChild(r.domElement);
+    var sc=new T.Scene(),cam=new T.PerspectiveCamera(36,1,.1,100);cam.position.set(0,camY,camZ);cam.lookAt(0,camY*.35,0);
+    sc.add(new T.AmbientLight(0x9fe9d6,.55));
+    var key=new T.DirectionalLight(0xffffff,1.1);key.position.set(3,5,4);sc.add(key);
+    var rim=new T.PointLight(0x16a394,1.6,20);rim.position.set(-4,2,-2);sc.add(rim);
+    var warm=new T.PointLight(0xf2b84b,1.1,20);warm.position.set(3,-1,3);sc.add(warm);
+    var tick=build(sc);
+    function size(){var w=host.clientWidth||300;r.setSize(w,w,false);cam.aspect=1;cam.updateProjectionMatrix();}
+    size();window.addEventListener('resize',size);
+    var mx=0,my=0;host.addEventListener('pointermove',function(e){var b=host.getBoundingClientRect();mx=(e.clientX-b.left)/b.width-.5;my=(e.clientY-b.top)/b.height-.5;});
+    host.addEventListener('pointerleave',function(){mx=0;my=0});
+    var vis=true;if('IntersectionObserver' in window)new IntersectionObserver(function(es){vis=es[0].isIntersecting}).observe(host);
+    var t0=performance.now();
+    (function loop(now){requestAnimationFrame(loop);if(!vis)return;var t=reduce?0:(now-t0)/1000;tick(t,mx,my);r.render(sc,cam);})(t0);
+  }
+  var gold=new T.MeshStandardMaterial({color:0xf2b84b,metalness:.85,roughness:.22});
+  var mint=new T.MeshStandardMaterial({color:0x7fe0c8,metalness:.3,roughness:.35});
+  var teal=new T.MeshStandardMaterial({color:0x16a394,metalness:.2,roughness:.5});
+  var paper=new T.MeshStandardMaterial({color:0xf4fbf9,metalness:0,roughness:.8});
+
+  /* cup with orbiting documents */
+  scene3d('cup',function(sc){
+    var g=new T.Group();sc.add(g);
+    var pts=[[0,0],[.55,0],[.55,.12],[.18,.22],[.14,.7],[.22,.82],[.62,1.05],[.78,1.6],[.8,2.05],[.72,2.05],[.68,1.62],[.52,1.12],[0,.98]].map(function(p){return new T.Vector2(p[0],p[1])});
+    var body=new T.Mesh(new T.LatheGeometry(pts,64),gold);body.position.y=-1.1;g.add(body);
+    var base=new T.Mesh(new T.CylinderGeometry(.75,.85,.3,48),teal);base.position.y=-1.25;g.add(base);
+    [-1,1].forEach(function(s){var h=new T.Mesh(new T.TorusGeometry(.32,.06,16,40,Math.PI*1.25),gold);h.position.set(s*.86,.35,0);h.rotation.z=s>0?-Math.PI*.62:Math.PI*1.62;g.add(h);});
+    var star=new T.Mesh(new T.OctahedronGeometry(.16),mint);star.position.set(0,1.25,0);g.add(star);
+    var docs=[];for(var i=0;i<6;i++){var d=new T.Mesh(new T.BoxGeometry(.42,.56,.02),i%2?paper:mint);sc.add(d);docs.push({m:d,a:i/6*Math.PI*2,r:1.75+(i%3)*.18,y:-.4+(i%3)*.5});}
+    var gems=[];for(var j=0;j<10;j++){var s=new T.Mesh(new T.IcosahedronGeometry(.05+.04*Math.random()),j%2?mint:gold);s.position.set((Math.random()-.5)*4,(Math.random()-.5)*3.2,(Math.random()-.5)*2-1);sc.add(s);gems.push(s);}
+    return function(t,mx,my){g.rotation.y=t*.5+mx*.8;g.rotation.x=my*.3;g.position.y=Math.sin(t*1.2)*.08;star.rotation.y=t*2;
+      docs.forEach(function(o,k){var a=o.a+t*.35;o.m.position.set(Math.cos(a)*o.r,o.y+Math.sin(t+k)*.12,Math.sin(a)*o.r*.55);o.m.rotation.set(Math.sin(t*.7+k)*.4,-a+Math.PI/2,Math.sin(t+k)*.2);});
+      gems.forEach(function(s,k){s.position.y+=Math.sin(t*1.3+k)*.002;s.rotation.x=t+k;s.rotation.y=t*.8;});};
+  },6.2,.4);
+
+  /* podium */
+  function label(txt,bg,fg){var c=document.createElement('canvas');c.width=c.height=256;var x=c.getContext('2d');x.fillStyle=bg;x.fillRect(0,0,256,256);x.fillStyle=fg;x.font='700 150px Unbounded, Arial, sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(txt,128,140);return new T.MeshStandardMaterial({map:new T.CanvasTexture(c),roughness:.5});}
+  scene3d('podium',function(sc){
+    var g=new T.Group();sc.add(g);
+    var spec=[{x:0,h:1.5,n:'1',c:0xf2b84b,bg:'#f2b84b',fg:'#0b2f3a'},{x:-1.25,h:1.05,n:'2',c:0x7fe0c8,bg:'#7fe0c8',fg:'#0b2f3a'},{x:1.25,h:.75,n:'3',c:0x16a394,bg:'#16a394',fg:'#f4fbf9'}];
+    var medals=[];
+    spec.forEach(function(s){var side=new T.MeshStandardMaterial({color:s.c,roughness:.45,metalness:.15});var front=label(s.n,s.bg,s.fg);
+      var b=new T.Mesh(new T.BoxGeometry(1.15,s.h,1.1),[side,side,side,side,front,side]);b.position.set(s.x,s.h/2-1.2,0);g.add(b);
+      var m=new T.Mesh(new T.CylinderGeometry(.26,.26,.06,40),s.n==='1'?gold:mint);m.rotation.x=Math.PI/2;m.position.set(s.x,s.h-1.2+.55,0);g.add(m);medals.push({m:m,y:m.position.y});});
+    var floor=new T.Mesh(new T.CylinderGeometry(2.4,2.4,.06,64),new T.MeshStandardMaterial({color:0x0d4f55,roughness:.9}));floor.position.y=-1.23;g.add(floor);
+    return function(t,mx,my){g.rotation.y=Math.sin(t*.4)*.35+mx*.9;g.rotation.x=.12+my*.2;medals.forEach(function(o,k){o.m.rotation.z=t*2+k;o.m.position.y=o.y+Math.sin(t*1.6+k)*.07;});};
+  },6.4,1.2);
+})();
+</script>
+
+</body></html>
